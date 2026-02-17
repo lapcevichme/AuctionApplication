@@ -1,6 +1,5 @@
-package com.lapcevichme.auctionapplication.ui.theme
+package com.lapcevichme.auctionapplication.presentation.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

@@ -1,4 +1,4 @@
-package com.lapcevichme.auctionapplication.ui.theme
+package com.lapcevichme.auctionapplication.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
