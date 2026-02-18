@@ -2,8 +2,21 @@ package com.lapcevichme.auctionapplication.data.remote
 
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.ServerResponseException
+import io.ktor.client.statement.bodyAsText
+import io.ktor.serialization.JsonConvertException
 import kotlinx.io.IOException
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import kotlin.coroutines.cancellation.CancellationException
+
+@Serializable
+data class ErrorResponse(
+    val timestamp: String? = null,
+    val status: Int? = null,
+    val error: String? = null,
+    val message: String? = null,
+    val path: String? = null
+)
 
 suspend fun <T> safeApiCall(
     apiCall: suspend () -> T
@@ -14,28 +27,49 @@ suspend fun <T> safeApiCall(
         if (e is CancellationException) {
             throw e
         }
-
         val mappedException = mapNetworkException(e)
         Result.failure(mappedException)
     }
 }
 
-private fun mapNetworkException(e: Exception): Exception {
+private suspend fun mapNetworkException(e: Exception): Exception {
     return when (e) {
         is ClientRequestException -> {
-            Exception("Ошибка клиента: ${e.response.status.value}", e)
+            val errorBody = try {
+                e.response.bodyAsText()
+            } catch (parseEx: Exception) {
+                null
+            }
+
+            val errorMessage = try {
+                if (errorBody != null) {
+                    val errorObj =
+                        Json { ignoreUnknownKeys = true }.decodeFromString<ErrorResponse>(errorBody)
+                    errorObj.message ?: errorObj.error ?: "Ошибка ввода данных"
+                } else {
+                    "Ошибка клиента"
+                }
+            } catch (jsonEx: Exception) {
+                errorBody ?: "Некорректный запрос"
+            }
+
+            Exception(errorMessage)
         }
-        // 5xx
+
         is ServerResponseException -> {
-            Exception("Сервер временно недоступен (${e.response.status.value})", e)
+            Exception("Сервер временно недоступен (${e.response.status.value})")
         }
 
         is IOException -> {
-            Exception("Проверьте соединение с интернетом", e)
+            Exception("Нет подключения к интернету")
+        }
+
+        is JsonConvertException -> {
+            Exception("Ошибка обработки данных от сервера")
         }
 
         else -> {
-            Exception("Неизвестная ошибка: ${e.localizedMessage}", e)
+            Exception("Неизвестная ошибка: ${e.localizedMessage}")
         }
     }
 }

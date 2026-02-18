@@ -19,50 +19,43 @@ class LoginViewModel(
     private val loginUseCase: LoginUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Content())
+    private val _uiState = MutableStateFlow(LoginUiState())
     val uiState = _uiState.asStateFlow()
 
     private val _events = Channel<LoginEvent>()
     val events = _events.receiveAsFlow()
 
     fun onEmailChange(value: String) {
-        updateContent { it.copy(email = value, emailError = null) }
+        _uiState.update {
+            it.copy(email = value, emailError = null, generalError = null)
+        }
     }
 
     fun onPasswordChanged(value: String) {
-        updateContent { it.copy(password = value, passwordError = null) }
+        _uiState.update {
+            it.copy(password = value, passwordError = null, generalError = null)
+        }
     }
 
     fun onLoginClick() {
-        val currentState = _uiState.value as? LoginUiState.Content ?: return
+        val currentState = _uiState.value
         if (!currentState.canLogin) return
 
         viewModelScope.launch {
-            updateContent { it.copy(isSubmitting = true) }
+            _uiState.update { it.copy(isSubmitting = true, generalError = null) }
 
             val result = loginUseCase(currentState.email, currentState.password)
 
             result.onSuccess {
+                _uiState.update { it.copy(isSubmitting = false) }
                 _events.send(LoginEvent.NavigateToHome)
-                updateContent { it.copy(isSubmitting = false) }
             }.onFailure { error ->
-                updateContent {
+                _uiState.update {
                     it.copy(
                         isSubmitting = false,
-                        passwordError = "Ошибка входа. Проверьте данные."
+                        generalError = error.message ?: "Ошибка входа"
                     )
                 }
-                _events.send(LoginEvent.ShowError(error.message ?: "Unknown error"))
-            }
-        }
-    }
-
-    private fun updateContent(update: (LoginUiState.Content) -> LoginUiState.Content) {
-        _uiState.update { currentState ->
-            if (currentState is LoginUiState.Content) {
-                update(currentState)
-            } else {
-                currentState
             }
         }
     }

@@ -7,6 +7,9 @@ import com.lapcevichme.auctionapplication.data.remote.dto.auth.AuthResponseDto
 import com.lapcevichme.auctionapplication.data.remote.dto.auth.RefreshRequest
 import com.lapcevichme.auctionapplication.data.remote.dto.auth.toDomain
 import com.lapcevichme.auctionapplication.data.repository.AuthRepositoryImpl
+import com.lapcevichme.auctionapplication.domain.usecase.auth.LoginCheckUseCase
+import com.lapcevichme.auctionapplication.domain.usecase.auth.LoginUseCase
+import com.lapcevichme.auctionapplication.domain.usecase.auth.RegisterUseCase
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -51,10 +54,14 @@ object Dependencies {
 
     val authClient by lazy {
         HttpClient(CIO) {
+            expectSuccess = true
             install(ContentNegotiation) {
                 json(jsonParams)
             }
-            defaultRequest { url(BASE_URL) }
+            defaultRequest {
+                url(BASE_URL)
+                contentType(ContentType.Application.Json)
+            }
             install(Logging) {
                 logger = object : Logger {
                     override fun log(message: String) {
@@ -140,6 +147,18 @@ object Dependencies {
 
     val authRepository by lazy {
         AuthRepositoryImpl(authClient, tokenStorage)
+    }
+
+    val loginUseCase by lazy {
+        LoginUseCase(authRepository)
+    }
+
+    val registerUseCase by lazy {
+        RegisterUseCase(authRepository)
+    }
+
+    val loginCheckUseCase by lazy {
+        LoginCheckUseCase(authRepository)
     }
 
     /*
