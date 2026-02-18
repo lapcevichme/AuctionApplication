@@ -1,4 +1,4 @@
-package com.lapcevichme.auctionapplication.presentation.features.auth
+package com.lapcevichme.auctionapplication.presentation.features.auth.register
 
 data class RegisterUiState(
     val email: String = "",

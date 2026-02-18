@@ -1,4 +1,4 @@
-package com.lapcevichme.auctionapplication.presentation.features.auth
+package com.lapcevichme.auctionapplication.presentation.features.auth.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

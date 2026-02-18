@@ -7,10 +7,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.lapcevichme.auctionapplication.di.Dependencies
-import com.lapcevichme.auctionapplication.presentation.features.auth.LoginScreen
-import com.lapcevichme.auctionapplication.presentation.features.auth.LoginViewModel
-import com.lapcevichme.auctionapplication.presentation.features.auth.RegisterScreen
-import com.lapcevichme.auctionapplication.presentation.features.auth.RegisterViewModel
+import com.lapcevichme.auctionapplication.presentation.features.auth.login.LoginScreen
+import com.lapcevichme.auctionapplication.presentation.features.auth.login.LoginViewModel
+import com.lapcevichme.auctionapplication.presentation.features.auth.register.RegisterScreen
+import com.lapcevichme.auctionapplication.presentation.features.auth.register.RegisterViewModel
 import com.lapcevichme.auctionapplication.presentation.features.splash.SplashScreen
 import com.lapcevichme.auctionapplication.presentation.features.splash.SplashViewModel
 import com.lapcevichme.auctionapplication.presentation.utils.viewModelFactory

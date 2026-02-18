@@ -1,4 +1,4 @@
-package com.lapcevichme.auctionapplication.presentation.features.auth
+package com.lapcevichme.auctionapplication.presentation.features.auth.register
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lapcevichme.auctionapplication.presentation.features.auth.AuthTextField
 
 @Composable
 fun RegisterScreen(
