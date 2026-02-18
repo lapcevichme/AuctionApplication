@@ -17,24 +17,27 @@ class TokenStorage(private val context: Context) {
     companion object {
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
         private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token")
+        private val EXPIRES_AT_KEY = stringPreferencesKey("expires_at")
     }
 
     suspend fun getTokens(): AuthTokens {
         return context.dataStore.data.map { preferences ->
             AuthTokens(
                 accessToken = preferences[ACCESS_TOKEN_KEY]?.let { cryptoManager.decrypt(it) },
-                refreshToken = preferences[REFRESH_TOKEN_KEY]?.let { cryptoManager.decrypt(it) }
+                refreshToken = preferences[REFRESH_TOKEN_KEY]?.let { cryptoManager.decrypt(it) },
+                expiresAt = preferences[EXPIRES_AT_KEY]?.toLongOrNull()
             )
         }.first()
     }
 
-    suspend fun saveTokens(accessToken: String, refreshToken: String) {
-        val encryptedAccess = cryptoManager.encrypt(accessToken)
-        val encryptedRefresh = cryptoManager.encrypt(refreshToken)
+    suspend fun saveTokens(tokens: AuthTokens) {
+        val encryptedAccess = tokens.accessToken?.let { cryptoManager.encrypt(it) }
+        val encryptedRefresh = tokens.refreshToken?.let { cryptoManager.encrypt(it) }
 
         context.dataStore.edit { preferences ->
-            preferences[ACCESS_TOKEN_KEY] = encryptedAccess
-            preferences[REFRESH_TOKEN_KEY] = encryptedRefresh
+            if (encryptedAccess != null) preferences[ACCESS_TOKEN_KEY] = encryptedAccess
+            if (encryptedRefresh != null) preferences[REFRESH_TOKEN_KEY] = encryptedRefresh
+            preferences[EXPIRES_AT_KEY] = tokens.expiresAt.toString()
         }
     }
 

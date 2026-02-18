@@ -5,6 +5,8 @@ import android.util.Log
 import com.lapcevichme.auctionapplication.data.local.TokenStorage
 import com.lapcevichme.auctionapplication.data.remote.dto.auth.AuthResponseDto
 import com.lapcevichme.auctionapplication.data.remote.dto.auth.RefreshRequest
+import com.lapcevichme.auctionapplication.data.remote.dto.auth.toDomain
+import com.lapcevichme.auctionapplication.data.repository.AuthRepositoryImpl
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -106,20 +108,17 @@ object Dependencies {
                     refreshTokens {
                         val oldTokens = tokenStorage.getTokens()
                         val refreshToken = oldTokens.refreshToken
-
                         if (refreshToken.isNullOrBlank()) return@refreshTokens null
 
                         try {
-                            val responseBody = authClient.post("auth/refresh") {
+                            val responseDto = authClient.post("auth/refresh") {
                                 setBody(RefreshRequest(refreshToken))
                             }.body<AuthResponseDto>()
 
-                            tokenStorage.saveTokens(
-                                responseBody.accessToken,
-                                responseBody.refreshToken
-                            )
-                            BearerTokens(responseBody.accessToken, responseBody.refreshToken)
+                            val newTokens = responseDto.toDomain()
+                            tokenStorage.saveTokens(newTokens)
 
+                            BearerTokens(newTokens.accessToken!!, newTokens.refreshToken!!)
                         } catch (e: ClientRequestException) {
                             Log.e("Auth", "Refresh token is invalid/expired. Logging out.")
                             tokenStorage.clear()
@@ -139,11 +138,11 @@ object Dependencies {
         }
     }
 
-    /*
     val authRepository by lazy {
         AuthRepositoryImpl(authClient, tokenStorage)
     }
 
+    /*
     val mainRepository by lazy {
         MainRepositoryImpl(httpClient)
     }
