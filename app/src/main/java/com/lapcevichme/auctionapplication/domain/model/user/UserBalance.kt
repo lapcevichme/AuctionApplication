@@ -1,6 +1,7 @@
 package com.lapcevichme.auctionapplication.domain.model.user
 
 data class UserBalance(
-    val active: Long,
-    val inactive: Long
+    val available: Long,
+    val frozen: Long,
+    val scale: Int
 )

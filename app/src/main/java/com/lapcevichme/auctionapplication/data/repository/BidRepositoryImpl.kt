@@ -1,5 +1,6 @@
 package com.lapcevichme.auctionapplication.data.repository
 
+import com.lapcevichme.auctionapplication.domain.model.PagedData
 import com.lapcevichme.auctionapplication.domain.model.bid.Bid
 import com.lapcevichme.auctionapplication.domain.model.bid.BidSummary
 import com.lapcevichme.auctionapplication.domain.model.bid.MakeBidParam
@@ -9,7 +10,7 @@ import io.ktor.client.HttpClient
 class BidRepositoryImpl(
     private val httpClient: HttpClient
 ) : BidRepository {
-    override suspend fun getBids(lotId: String): Result<List<BidSummary>> {
+    override suspend fun getBids(lotId: String): Result<PagedData<BidSummary>> {
         TODO("Not yet implemented")
     }
 
