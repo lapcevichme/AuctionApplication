@@ -287,8 +287,8 @@ fun LotCard(
 }
 
 private class LotsUiStateProvider : PreviewParameterProvider<LotsUiState> {
-    val mockUser1 = User(name = "Александр Пушкин", role = UserRole.SELLER, avatarUrl = null)
-    val mockUser2 = User(name = "Иван Иванов", role = UserRole.BUYER, avatarUrl = null)
+    val mockUser1 = User(id = "0", name = "Александр Пушкин", role = UserRole.SELLER, avatarUrl = null)
+    val mockUser2 = User(id = "0", name = "Иван Иванов", role = UserRole.BUYER, avatarUrl = null)
 
     val mockLots = listOf(
         LotSummary(
@@ -338,7 +338,7 @@ fun LotsScreenPreview(
 @Preview(showBackground = true, name = "Lot Card Active")
 @Composable
 fun LotCardPreview() {
-    val mockUser = User(name = "Константин", role = UserRole.SELLER, avatarUrl = null)
+    val mockUser = User(id = "0", name = "Константин", role = UserRole.SELLER, avatarUrl = null)
     MaterialTheme {
         Box(modifier = Modifier.padding(16.dp)) {
             LotCard(

@@ -41,9 +41,9 @@ object Dependencies {
 
     private const val BASE_URL = "http://cmdev.pw:8089/"
 
-    private val jsonParams = Json {
+    val json = Json {
         ignoreUnknownKeys = true
-        prettyPrint = true
+        coerceInputValues = true
         isLenient = true
     }
 
@@ -56,7 +56,7 @@ object Dependencies {
         HttpClient(CIO) {
             expectSuccess = true
             install(ContentNegotiation) {
-                json(jsonParams)
+                json(json)
             }
             defaultRequest {
                 url(BASE_URL)
@@ -78,7 +78,7 @@ object Dependencies {
             expectSuccess = true
 
             install(ContentNegotiation) {
-                json(jsonParams)
+                json(json)
             }
 
             install(Logging) {

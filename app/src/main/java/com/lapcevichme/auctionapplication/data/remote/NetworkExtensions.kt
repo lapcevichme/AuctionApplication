@@ -1,12 +1,12 @@
 package com.lapcevichme.auctionapplication.data.remote
 
+import com.lapcevichme.auctionapplication.di.Dependencies
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.statement.bodyAsText
 import io.ktor.serialization.JsonConvertException
 import kotlinx.io.IOException
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import kotlin.coroutines.cancellation.CancellationException
 
 @Serializable
@@ -43,8 +43,7 @@ private suspend fun mapNetworkException(e: Exception): Exception {
 
             val errorMessage = try {
                 if (errorBody != null) {
-                    val errorObj =
-                        Json { ignoreUnknownKeys = true }.decodeFromString<ErrorResponse>(errorBody)
+                    val errorObj = Dependencies.json.decodeFromString<ErrorResponse>(errorBody)
                     errorObj.message ?: errorObj.error ?: "Ошибка ввода данных"
                 } else {
                     "Ошибка клиента"
