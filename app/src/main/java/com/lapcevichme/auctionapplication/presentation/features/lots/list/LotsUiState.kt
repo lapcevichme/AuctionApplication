@@ -8,7 +8,9 @@ sealed interface LotsUiState {
     data class Success(
         val lots: List<LotSummary> = emptyList(),
         val searchQuery: String = "",
-        val isSearchActive: Boolean = false
+        val isSearchActive: Boolean = false,
+        val isNextPageLoading: Boolean = false,
+        val isLastPage: Boolean = false
     ) : LotsUiState {
         val isEmpty: Boolean get() = lots.isEmpty()
     }

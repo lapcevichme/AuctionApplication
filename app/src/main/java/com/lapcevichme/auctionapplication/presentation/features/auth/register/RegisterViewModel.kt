@@ -46,7 +46,6 @@ class RegisterViewModel(
     fun onRegisterClick() {
         val currentState = _uiState.value
 
-        // Валидация перед отправкой
         if (currentState.password.length < 6) {
             _uiState.update { it.copy(passwordError = "Пароль слишком короткий (минимум 6)") }
             return
