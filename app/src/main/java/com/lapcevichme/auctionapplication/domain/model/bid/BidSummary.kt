@@ -1,4 +1,4 @@
-package com.lapcevichme.auctionapplication.domain.model
+package com.lapcevichme.auctionapplication.domain.model.bid
 
 import java.time.OffsetDateTime
 

@@ -1,6 +1,6 @@
 package com.lapcevichme.auctionapplication.presentation.features.lots.list
 
-import com.lapcevichme.auctionapplication.domain.model.LotSummary
+import com.lapcevichme.auctionapplication.domain.model.lot.LotSummary
 
 sealed interface LotsUiState {
     data object Loading : LotsUiState

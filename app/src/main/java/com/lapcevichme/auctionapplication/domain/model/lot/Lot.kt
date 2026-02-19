@@ -1,5 +1,7 @@
-package com.lapcevichme.auctionapplication.domain.model
+package com.lapcevichme.auctionapplication.domain.model.lot
 
+import com.lapcevichme.auctionapplication.domain.model.user.User
+import com.lapcevichme.auctionapplication.domain.model.bid.Bid
 import java.time.OffsetDateTime
 
 data class Lot(

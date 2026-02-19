@@ -1,8 +1,8 @@
 package com.lapcevichme.auctionapplication.data.repository
 
-import com.lapcevichme.auctionapplication.domain.model.Bid
-import com.lapcevichme.auctionapplication.domain.model.BidSummary
-import com.lapcevichme.auctionapplication.domain.model.MakeBidParam
+import com.lapcevichme.auctionapplication.domain.model.bid.Bid
+import com.lapcevichme.auctionapplication.domain.model.bid.BidSummary
+import com.lapcevichme.auctionapplication.domain.model.bid.MakeBidParam
 import com.lapcevichme.auctionapplication.domain.repository.BidRepository
 import io.ktor.client.HttpClient
 

@@ -23,11 +23,11 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.lapcevichme.auctionapplication.domain.model.Bid
-import com.lapcevichme.auctionapplication.domain.model.LotStatus
-import com.lapcevichme.auctionapplication.domain.model.LotSummary
-import com.lapcevichme.auctionapplication.domain.model.User
-import com.lapcevichme.auctionapplication.domain.model.UserRole
+import com.lapcevichme.auctionapplication.domain.model.bid.Bid
+import com.lapcevichme.auctionapplication.domain.model.lot.LotStatus
+import com.lapcevichme.auctionapplication.domain.model.lot.LotSummary
+import com.lapcevichme.auctionapplication.domain.model.user.User
+import com.lapcevichme.auctionapplication.domain.model.user.UserRole
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 

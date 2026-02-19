@@ -1,4 +1,4 @@
-package com.lapcevichme.auctionapplication.domain.model
+package com.lapcevichme.auctionapplication.domain.model.user
 
 data class User(
     val name: String,

@@ -1,8 +1,8 @@
 package com.lapcevichme.auctionapplication.data.repository
 
-import com.lapcevichme.auctionapplication.domain.model.CreateLotParam
-import com.lapcevichme.auctionapplication.domain.model.Lot
-import com.lapcevichme.auctionapplication.domain.model.LotSummary
+import com.lapcevichme.auctionapplication.domain.model.lot.CreateLotParam
+import com.lapcevichme.auctionapplication.domain.model.lot.Lot
+import com.lapcevichme.auctionapplication.domain.model.lot.LotSummary
 import com.lapcevichme.auctionapplication.domain.repository.LotRepository
 import io.ktor.client.HttpClient
 

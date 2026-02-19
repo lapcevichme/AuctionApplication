@@ -1,7 +1,7 @@
 package com.lapcevichme.auctionapplication.data.remote.dto.auth
 
-import com.lapcevichme.auctionapplication.domain.model.UserBalance
-import com.lapcevichme.auctionapplication.domain.model.UserRole
+import com.lapcevichme.auctionapplication.domain.model.user.UserBalance
+import com.lapcevichme.auctionapplication.domain.model.user.UserRole
 
 data class UserPatch(
     val name: String?,
