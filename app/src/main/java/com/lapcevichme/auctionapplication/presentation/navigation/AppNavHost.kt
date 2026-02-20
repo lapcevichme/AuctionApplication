@@ -3,6 +3,8 @@ package com.lapcevichme.auctionapplication.presentation.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,9 +13,10 @@ import com.lapcevichme.auctionapplication.presentation.features.auth.login.Login
 import com.lapcevichme.auctionapplication.presentation.features.auth.login.LoginViewModel
 import com.lapcevichme.auctionapplication.presentation.features.auth.register.RegisterScreen
 import com.lapcevichme.auctionapplication.presentation.features.auth.register.RegisterViewModel
+import com.lapcevichme.auctionapplication.presentation.features.lots.list.LotsRoute
+import com.lapcevichme.auctionapplication.presentation.features.lots.list.LotsViewModel
 import com.lapcevichme.auctionapplication.presentation.features.splash.SplashScreen
 import com.lapcevichme.auctionapplication.presentation.features.splash.SplashViewModel
-import com.lapcevichme.auctionapplication.presentation.utils.viewModelFactory
 
 @Composable
 fun AppNavHost(
@@ -28,7 +31,9 @@ fun AppNavHost(
         composable(Screen.Splash.route) {
             val viewModel: SplashViewModel = viewModel(
                 factory = viewModelFactory {
-                    SplashViewModel(Dependencies.loginCheckUseCase)
+                    initializer {
+                        SplashViewModel(Dependencies.loginCheckUseCase)
+                    }
                 }
             )
 
@@ -50,7 +55,9 @@ fun AppNavHost(
         composable(Screen.Login.route) {
             val viewModel: LoginViewModel = viewModel(
                 factory = viewModelFactory {
-                    LoginViewModel(Dependencies.loginUseCase)
+                    initializer {
+                        LoginViewModel(Dependencies.loginUseCase)
+                    }
                 }
             )
 
@@ -70,7 +77,9 @@ fun AppNavHost(
         composable(Screen.Register.route) {
             val viewModel: RegisterViewModel = viewModel(
                 factory = viewModelFactory {
-                    RegisterViewModel(Dependencies.registerUseCase)
+                    initializer {
+                        RegisterViewModel(Dependencies.registerUseCase)
+                    }
                 }
             )
 
@@ -86,15 +95,19 @@ fun AppNavHost(
         }
 
         composable(Screen.Main.route) {
-            /*
-            val viewModel: MainViewModel = viewModel(
+            val viewModel: LotsViewModel = viewModel(
                 factory = viewModelFactory {
-                    MainViewModel(Dependencies.authRepository)
+                    initializer {
+                        LotsViewModel(Dependencies.getLotsUseCase, Dependencies.getLotByIdUseCase)
+                    }
                 }
             )
 
-            MainScreen(viewModel = viewModel)
-            */
+            LotsRoute(
+                viewModel = viewModel,
+                onProfileClick = {  },
+                onLotClick = {  }
+            )
         }
     }
 }

@@ -1,7 +1,16 @@
 package com.lapcevichme.auctionapplication.presentation.features.lots.list
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -10,8 +19,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,6 +46,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.lapcevichme.auctionapplication.domain.model.bid.Bid
 import com.lapcevichme.auctionapplication.domain.model.lot.LotStatus
@@ -32,13 +56,34 @@ import com.lapcevichme.auctionapplication.domain.model.user.UserRole
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
+
+@Composable
+fun LotsRoute(
+    viewModel: LotsViewModel,
+    onProfileClick: () -> Unit,
+    onLotClick: (String) -> Unit
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LotsScreen(
+        state = state,
+        onQueryChange = { /* viewModel.onQueryChange() */ },
+        onSearchActiveChange = { isActive -> viewModel.onSearchActiveChange(isActive) },
+        onProfileClick = onProfileClick,
+        onLoadNextPage = { viewModel.loadNextPage() },
+        onLotClick = onLotClick
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LotsScreen(
     state: LotsUiState,
     onQueryChange: (String) -> Unit = {},
     onSearchActiveChange: (Boolean) -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    onLoadNextPage: () -> Unit = {},
+    onLotClick: (String) -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -48,7 +93,7 @@ fun LotsScreen(
                     IconButton(onClick = onProfileClick) {
                         Icon(
                             imageVector = Icons.Default.Person,
-                            contentDescription = null
+                            contentDescription = "Профиль"
                         )
                     }
                 }
@@ -92,7 +137,11 @@ fun LotsScreen(
                     )
                 ) {
                     if (state is LotsUiState.Success) {
-                        LotsContent(lots = state.lots)
+                        LotsContent(
+                            state = state,
+                            onLoadNextPage = onLoadNextPage,
+                            onLotClick = onLotClick
+                        )
                     }
                 }
             }
@@ -103,11 +152,17 @@ fun LotsScreen(
                         CircularProgressIndicator()
                     }
                 }
+
                 is LotsUiState.Success -> {
                     if (!state.isSearchActive) {
-                        LotsContent(lots = state.lots)
+                        LotsContent(
+                            state = state,
+                            onLoadNextPage = onLoadNextPage,
+                            onLotClick = onLotClick
+                        )
                     }
                 }
+
                 is LotsUiState.Error -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text(text = state.message, color = MaterialTheme.colorScheme.error)
@@ -120,18 +175,39 @@ fun LotsScreen(
 
 @Composable
 fun LotsContent(
-    lots: List<LotSummary>
+    state: LotsUiState.Success,
+    onLoadNextPage: () -> Unit,
+    onLotClick: (String) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(lots) { lot ->
+        items(state.lots) { lot ->
             LotCard(
                 lot = lot,
-                onClick = { }
+                onClick = { onLotClick(lot.id) }
             )
+        }
+
+        if (!state.isLastPage) {
+            item {
+                LaunchedEffect(Unit) {
+                    onLoadNextPage()
+                }
+
+                if (state.isNextPageLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.size(32.dp))
+                    }
+                }
+            }
         }
     }
 }
@@ -297,7 +373,8 @@ fun LotCard(
 }
 
 private class LotsUiStateProvider : PreviewParameterProvider<LotsUiState> {
-    val mockUser1 = User(id = "0", name = "Александр Пушкин", role = UserRole.SELLER, avatarUrl = null)
+    val mockUser1 =
+        User(id = "0", name = "Александр Пушкин", role = UserRole.SELLER, avatarUrl = null)
     val mockUser2 = User(id = "0", name = "Иван Иванов", role = UserRole.BUYER, avatarUrl = null)
 
     val mockLots = listOf(

@@ -63,12 +63,7 @@ class AuthRepositoryImpl(
     override fun isLoggedIn(): Boolean {
         return runBlocking {
             val tokens = tokenStorage.getTokens()
-            val now = System.currentTimeMillis()
-
-            val hasToken = !tokens.accessToken.isNullOrBlank()
-            val isNotExpired = tokens.expiresAt?.let { it > now } ?: hasToken
-
-            hasToken && isNotExpired
+            !tokens.refreshToken.isNullOrBlank()
         }
     }
 }

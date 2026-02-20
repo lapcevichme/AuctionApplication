@@ -7,9 +7,13 @@ import com.lapcevichme.auctionapplication.data.remote.dto.auth.AuthResponseDto
 import com.lapcevichme.auctionapplication.data.remote.dto.auth.RefreshRequest
 import com.lapcevichme.auctionapplication.data.remote.dto.auth.toDomain
 import com.lapcevichme.auctionapplication.data.repository.AuthRepositoryImpl
+import com.lapcevichme.auctionapplication.data.repository.LotRepositoryImpl
+import com.lapcevichme.auctionapplication.domain.repository.LotRepository
 import com.lapcevichme.auctionapplication.domain.usecase.auth.LoginCheckUseCase
 import com.lapcevichme.auctionapplication.domain.usecase.auth.LoginUseCase
 import com.lapcevichme.auctionapplication.domain.usecase.auth.RegisterUseCase
+import com.lapcevichme.auctionapplication.domain.usecase.lots.GetLotByIdUseCase
+import com.lapcevichme.auctionapplication.domain.usecase.lots.GetLotsUseCase
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -120,6 +124,7 @@ object Dependencies {
                         try {
                             val responseDto = authClient.post("auth/refresh") {
                                 setBody(RefreshRequest(refreshToken))
+                                markAsRefreshTokenRequest()
                             }.body<AuthResponseDto>()
 
                             val newTokens = responseDto.toDomain()
@@ -161,9 +166,15 @@ object Dependencies {
         LoginCheckUseCase(authRepository)
     }
 
-    /*
-    val mainRepository by lazy {
-        MainRepositoryImpl(httpClient)
+    val lotRepository by lazy {
+        LotRepositoryImpl(httpClient)
     }
-    */
+
+    val getLotsUseCase by lazy {
+        GetLotsUseCase(lotRepository)
+    }
+
+    val getLotByIdUseCase by lazy {
+        GetLotByIdUseCase(lotRepository)
+    }
 }
