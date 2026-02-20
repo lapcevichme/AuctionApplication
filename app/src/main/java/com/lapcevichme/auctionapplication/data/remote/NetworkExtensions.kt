@@ -7,15 +7,17 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.serialization.JsonConvertException
 import kotlinx.io.IOException
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
 import kotlin.coroutines.cancellation.CancellationException
 
 @Serializable
-data class ErrorResponse(
+data class ApiErrorDto(
     val timestamp: String? = null,
     val status: Int? = null,
-    val error: String? = null,
+    val code: String? = null,
     val message: String? = null,
-    val path: String? = null
+    val path: String? = null,
+    val details: Map<String, JsonElement>? = null
 )
 
 suspend fun <T> safeApiCall(
@@ -42,14 +44,20 @@ private suspend fun mapNetworkException(e: Exception): Exception {
             }
 
             val errorMessage = try {
-                if (errorBody != null) {
-                    val errorObj = Dependencies.json.decodeFromString<ErrorResponse>(errorBody)
-                    errorObj.message ?: errorObj.error ?: "Ошибка ввода данных"
+                if (!errorBody.isNullOrBlank()) {
+                    val errorObj = Dependencies.json.decodeFromString<ApiErrorDto>(errorBody)
+
+                    val detailInfo =
+                        errorObj.details?.map { "${it.key}: ${it.value}" }?.joinToString(", ")
+
+                    val baseMessage = errorObj.message ?: errorObj.code ?: "Ошибка данных"
+
+                    if (!detailInfo.isNullOrEmpty()) "$baseMessage ($detailInfo)" else baseMessage
                 } else {
-                    "Ошибка клиента"
+                    "Ошибка клиента: ${e.response.status.value}"
                 }
             } catch (jsonEx: Exception) {
-                errorBody ?: "Некорректный запрос"
+                errorBody ?: "Ошибка запроса (${e.response.status.value})"
             }
 
             Exception(errorMessage)
