@@ -370,9 +370,9 @@ private fun LotDetailsContent(lot: Lot, bids: List<Bid>) {
 }
 
 private class LotDetailsUiStateProvider : PreviewParameterProvider<LotDetailsUiState> {
-    val user = User("Виктор П.", UserRole.SELLER, null)
-    val bidder1 = User("Мария К.", UserRole.BUYER, null)
-    val bidder2 = User("Иван И.", UserRole.BUYER, null)
+    val user = User(name = "Виктор П.", role = UserRole.SELLER, avatarUrl = null, id = "123")
+    val bidder1 = User(name ="Мария К.", role = UserRole.BUYER, avatarUrl = null, id = "123")
+    val bidder2 = User(name ="Иван И.", role = UserRole.BUYER, avatarUrl = null, id = "123")
 
     val mockBids = listOf(
         Bid("b3", bidder1, 28000, OffsetDateTime.now().minusMinutes(5)),
