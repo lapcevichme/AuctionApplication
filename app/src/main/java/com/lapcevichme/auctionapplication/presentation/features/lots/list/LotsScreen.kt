@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -36,12 +37,21 @@ import java.time.format.DateTimeFormatter
 fun LotsScreen(
     state: LotsUiState,
     onQueryChange: (String) -> Unit = {},
-    onSearchActiveChange: (Boolean) -> Unit = {}
+    onSearchActiveChange: (Boolean) -> Unit = {},
+    onProfileClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(text = "Лоты") }
+                title = { Text(text = "Лоты") },
+                actions = {
+                    IconButton(onClick = onProfileClick) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = null
+                        )
+                    }
+                }
             )
         }
     ) { innerPadding ->
